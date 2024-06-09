@@ -1,0 +1,96 @@
+{
+  "disciplinas": [
+    {
+      "id": "01",
+      "codigo": "T001",
+      "professor": "Roberto da Silva Amarael",
+      "nome_disciplina": "Banco de Dados",
+      "creditos": 5,
+      "local": "Sala 101",
+      "horario": "Segunda 19:00 - 20:40",
+      "espaco_disponivel": 5
+    },
+    {
+      "id": "02",
+      "codigo": "T002",
+      "professor": "Maria Fernanda Souza",
+      "nome_disciplina": "Programação Orientada a Objetos",
+      "creditos": 6,
+      "local": "Sala 102",
+      "horario": "Terça 19:00 - 21:40",
+      "espaco_disponivel": 10
+    },
+    {
+      "id": "03",
+      "codigo": "T003",
+      "professor": "João Carlos Pereira",
+      "nome_disciplina": "Estruturas de Dados",
+      "creditos": 5,
+      "local": "Sala 103",
+      "horario": "Quarta 19:00 - 20:40",
+      "espaco_disponivel": 15
+    },
+    {
+      "id": "04",
+      "codigo": "T004",
+      "professor": "Ana Paula Rodrigues",
+      "nome_disciplina": "Redes de Computadores",
+      "creditos": 6,
+      "local": "Sala 104",
+      "horario": "Quinta 19:00 - 21:40",
+      "espaco_disponivel": 0
+    },
+    {
+      "id": "05",
+      "codigo": "T005",
+      "professor": "Carlos Eduardo Santos",
+      "nome_disciplina": "Engenharia de Software",
+      "creditos": 5,
+      "local": "Sala 105",
+      "horario": "Segunda 19:00 - 20:40",
+      "espaco_disponivel": 12
+    },
+    {
+      "id": "06",
+      "codigo": "T006",
+      "professor": "Mariana Oliveira",
+      "nome_disciplina": "Inteligência Artificial",
+      "creditos": 6,
+      "local": "Sala 106",
+      "horario": "Terça 19:00 - 21:40",
+      "espaco_disponivel": 0
+    },
+    {
+      "id": "07",
+      "codigo": "T007",
+      "professor": "Pedro Henrique Souza",
+      "nome_disciplina": "Sistemas Operacionais",
+      "creditos": 5,
+      "local": "Sala 107",
+      "horario": "Quarta 19:00 - 20:40",
+      "espaco_disponivel": 18
+    },
+    {
+      "id": "08",
+      "codigo": "T008",
+      "professor": "Fernanda Cristina Almeida",
+      "nome_disciplina": "Computação Gráfica",
+      "creditos": 6,
+      "local": "Sala 108",
+      "horario": "Quinta 19:00 - 21:40",
+      "espaco_disponivel": 14
+    },
+    {
+      "id": "09",
+      "codigo": "T009",
+      "professor": "Lucas Ferreira Silva",
+      "nome_disciplina": "Segurança de Sistemas",
+      "creditos": 5,
+      "local": "Sala 109",
+      "horario": "Segunda 19:00 - 20:40",
+      "espaco_disponivel": 0
+    }
+  ],
+  "lista_de_espera": [
+  ]
+}
