@@ -1,58 +1,162 @@
 <template>
-    <div style="width: 50%; background-color: white; border-radius: 12px;">
-        <div
-            style="display: flex; flex-direction: column; margin: 10px 12px; justify-content: center; align-items: center;">
-            <div style="display: flex; width: 100%; align-items: flex-start; flex-direction: column; margin-bottom: 12px;">
-                <p style="font-weight: 600; font-size: 32px; margin-bottom: 12px;">SISTEMA ACADÊMICO</p>
-                <p>Olá! Preencha todas as informações para se inscrever!</p>
-            </div>
-            <Divider />
-            <div style="width: 80%; height: 100%; display: flex; flex-direction: column; margin-top: 20px; align-items: center;"
-                v-show="!loading">
-                <DataTable :value="dataDisciplinas" selectionMode="multiple" v-model:selection="selectionData"
-                    dataKey="codigo">
-                    <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
-                    <Column field="codigo" header="Código"></Column>
-                    <Column field="professor" header="Professor">
-                        <template #body="slotProps">
-                            <span>{{ slotProps.data.professor }}</span>
-                        </template>
-                    </Column>
-                    <Column field="nome_disciplina" header="Disciplina">
-                        <template #header>
-                            <span>Disciplina</span>
-                        </template>
-                        <template #body="slotProps">
-                            <span> {{ slotProps.data.nome_disciplina }} </span>
-                        </template>
-                    </Column>
-                    <Column field="creditos" header="Créditos">
-                    </Column>
-                    <Column field="local" header="Local"></Column>
-                    <Column field="horario" header="Horário"></Column>
-                </DataTable>
-                <InlineMessage severity="success" style="margin-top: 12px;" v-show="sucess">{{ message }}</InlineMessage>
-                <InlineMessage severity="error" style="margin-top: 12px;" v-show="error">{{ message }}</InlineMessage>
-                <div style="width: 150px; display: flex; margin: 24px 0px;">
-                    <Button label="Inscrever-se" severity="info" raised @click="confirmSelection"
-                        style="width: 100%;"></Button>
-                </div>
-            </div>
+    <div class="academic-system">
+      <!-- Cabeçalho -->
+      <header class="header">
+        <h1>SISTEMA ACADÊMICO</h1>
+        <p>Olá! Preencha todas as informações para se inscrever!</p>
+      </header>
+  
+      <Divider />
+  
+      <!-- Tabela de Inscrição -->
+      <section class="course-selection">
+        <DataTable :value="dataDisciplinas" selectionMode="multiple" v-model:selection="selectionData" dataKey="codigo" responsiveLayout="scroll">
+          <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
+          <Column field="codigo" header="Código" headerStyle="padding: 10px;" bodyStyle="padding: 10px;"></Column>
+          <Column field="professor" header="Professor" headerStyle="padding: 10px;" bodyStyle="padding: 10px;">
+            <template #body="slotProps">
+              <span>{{ slotProps.data.professor }}</span>
+            </template>
+          </Column>
+          <Column field="nome_disciplina" header="Disciplina" headerStyle="padding: 10px;" bodyStyle="padding: 10px;">
+            <template #body="slotProps">
+              <span>{{ slotProps.data.nome_disciplina }}</span>
+            </template>
+          </Column>
+          <Column field="creditos" header="Créditos" headerStyle="padding: 10px;" bodyStyle="padding: 10px;"></Column>
+          <Column field="local" header="Local" headerStyle="padding: 10px;" bodyStyle="padding: 10px;"></Column>
+          <Column field="horario" header="Horário" headerStyle="padding: 10px;" bodyStyle="padding: 10px;"></Column>
+        </DataTable>
+  
+        <Message severity="success" style="margin-top: 12px;" v-show="sucess">{{ message }}</Message>
+        <Message severity="error" style="margin-top: 12px;" v-show="error">{{ message }}</Message>
+  
+        <div class="action-button">
+          <Button label="Inscrever-se" severity="info" raised @click="confirmSelection"></Button>
         </div>
-        <Dialog v-model:visible="filaDeEspera" modal header="Turma lotada!" style="width: 20%;">
-            <div style="display: flex; flex-direction: column; margin-left: 8px;">
-                <p>A turma selecionada está lotada!</p>
-                <p>NOME: {{ disciplinaLotada.nome }}</p>
-                <p>CÓDIGO: {{ disciplinaLotada.turma.codigo }}</p>
-                <p>Deseja ser adicionado a lista de espera para esta turma?</p>
-            </div>            
-            <div style="display: flex; flex-direction: row; margin: 6px 12px; align-items: center; justify-content: center; gap: 16px;">
-                <Button label="Sim" severity="info" raised style="width: 30%;" @click="confirmQueueAdd"></Button>
-                <Button label="Não" severity="danger" raised  style="width: 30%;" @click="filaDeEspera = false"></Button>
-            </div>
-        </Dialog>
+      </section>
+  
+      <!-- Diálogo de Confirmação -->
+      <Dialog v-model:visible="filaDeEspera" modal header="Turma lotada!" style="width: 20%;">
+        <div class="dialog-content">
+          <p>A turma selecionada está lotada!</p>
+          <p>NOME: {{ disciplinaLotada.nome }}</p>
+          <p>CÓDIGO: {{ disciplinaLotada.turma.codigo }}</p>
+          <p>Deseja ser adicionado a lista de espera para esta turma?</p>
+        </div>
+        <div class="dialog-actions">
+          <Button label="Sim" severity="info" raised @click="confirmQueueAdd"></Button>
+          <Button label="Não" severity="danger" raised @click="filaDeEspera = false"></Button>
+        </div>
+      </Dialog>
     </div>
-</template>
+  </template>
+
+<style>
+.academic-system {
+  width: 70%;
+  background-color: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: #333;
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.header h1 {
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0;
+  color: #004d99;
+}
+
+.header p {
+  margin-top: 8px;
+  font-size: 16px;
+  color: #666;
+}
+
+.course-selection {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.p-datatable .p-datatable-thead > tr > th,
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 10px;
+}
+
+.action-button {
+  width: 150px;
+  margin: 24px 0;
+  text-align: center;
+}
+
+.action-button Button:hover{
+    background-color: #004d99;
+    border-color: #004d99;
+}
+
+.action-button Button{
+    font-size: 20px;
+}
+
+.action-button .p-button {
+  padding: 10px 20px;
+}
+
+.dialog-content {
+  margin-left: 8px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 6px 12px;
+}
+
+/* Paleta de Cores */
+:root {
+  --primary-color: #004d99;
+  --secondary-color: #0099cc;
+  --background-color: #f5f5f5;
+  --text-color: #333;
+  --border-color: #ddd;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+header {
+  color: var(--primary-color);
+}
+
+.p-button {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.p-button.p-button-info {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.p-dialog .p-dialog-header {
+  background-color: var(--primary-color);
+  color: #fff;
+}
+</style>
 
 <script setup>
 import Divider from 'primevue/divider'
@@ -60,7 +164,7 @@ import { onMounted, ref } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
-import InlineMessage from 'primevue/inlinemessage';
+import Message from 'primevue/message';
 import Dialog from 'primevue/dialog';
 
 // Variables
