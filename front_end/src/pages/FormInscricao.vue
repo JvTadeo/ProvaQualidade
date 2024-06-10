@@ -28,9 +28,6 @@
         <Column field="horario" header="Horário" headerStyle="padding: 10px;" bodyStyle="padding: 10px;"></Column>
       </DataTable>
 
-      <Message severity="success" style="margin-top: 12px;" v-show="sucess">{{ message }}</Message>
-      <Message severity="error" style="margin-top: 12px;" v-show="error">{{ message }}</Message>
-
       <div class="action-button">
         <Button label="Inscrever-se" severity="info" raised @click="confirmSelection"></Button>
       </div>
@@ -44,10 +41,12 @@
         <p class="p-text-secondary block mb-5">Deseja ser adicionado a lista de espera para esta turma?</p>
       </div>
       <div class="dialog-actions flex justify-content-end gap-2">
-        <Button label="Cancelar" severity="secondary" @click="filaDeEspera = false" class="cancel-button"></Button>
+        <Button label="Cancelar" severity="secondary" @click="filaDeEspera = false; clearSelection()" class="cancel-button"></Button>
         <Button label="Sim" @click="confirmQueueAdd" class="confirm-button"></Button>
       </div>
     </Dialog>
+
+    <Toast ref="toast" />
   </div>
 </template>
 
@@ -58,17 +57,18 @@ import { onMounted, ref } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Button from 'primevue/button';
-import Message from 'primevue/message';
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 
 // Variáveis
 const dataDisciplinas = ref([]);
 const selectionData = ref([]);
 const disciplinaLotada = ref();
 const loading = ref(true);
-const message = ref();
-const error = ref(false);
-const sucess = ref(false);
 const filaDeEspera = ref(false);
+
+// Toast
+const toast = useToast();
 
 // Métodos Nativos
 onMounted(() => {
@@ -88,10 +88,13 @@ const getDisciplinas = async () => {
   }
 }
 
+const clearSelection = () => {
+  selectionData.value = [];
+}
+
 const confirmSelection = async () => {
   if (selectionData.value.length == 0) {
-    message.value = 'Selecione pelo menos uma turma!';
-    error.value = true;
+    toast.add({ severity: 'error', summary: 'Erro', detail: 'Selecione pelo menos uma turma!', life: 3000 });
     return;
   }
   
@@ -107,31 +110,27 @@ const confirmSelection = async () => {
 
     if (response.status == 400) {
       const data = await response.json();
-      message.value = data.message;
-      sucess.value = false;
-      error.value = true;
+      toast.add({ severity: 'error', summary: 'Erro', detail: data.message, life: 3000 });
+      clearSelection();
     }
 
     if (response.status == 401) {
       const data = await response.json();
-      message.value = data.message;
-      sucess.value = false;
-      error.value = true;
+      toast.add({ severity: 'error', summary: 'Erro', detail: data.message, life: 3000 });
       filaDeEspera.value = true;
       disciplinaLotada.value = data.disciplina;
     }
 
     if (response.status == 200) {
       const data = await response.json();
-      message.value = data.message;
-      sucess.value = true;
-      error.value = false;
+      toast.add({ severity: 'success', summary: 'Sucesso', detail: data.message, life: 3000 });
+      clearSelection();
     }
 
   } catch (error) {
     console.error(error);
-    message.value = 'Ocorreu um erro ao realizar a inscrição';
-    error.value = true;
+    toast.add({ severity: 'error', summary: 'Erro', detail: 'Ocorreu um erro ao realizar a inscrição', life: 3000 });
+    clearSelection();
   }
 };
 
@@ -147,15 +146,15 @@ const confirmQueueAdd = async () => {
 
     if (response.status == 200) {
       const data = await response.json();
-      message.value = data.message;
-      sucess.value = true;
-      error.value = false;
+      toast.add({ severity: 'success', summary: 'Sucesso', detail: data.message, life: 3000 });
+      filaDeEspera.value = false;
+      clearSelection();
     }
 
   } catch (error) {
     console.error(error);
-    message.value = 'Ocorreu um erro ao ser adicionado a fila!';
-    error.value = true;
+    toast.add({ severity: 'error', summary: 'Erro', detail: 'Ocorreu um erro ao ser adicionado a fila!', life: 3000 });
+    clearSelection();
   }
 }
 </script>
@@ -221,18 +220,18 @@ const confirmQueueAdd = async () => {
   padding: 10px 20px;
 }
 
-.p-dialog{
+.p-dialog {
   padding: 0 10px;
   background-color: #ffffff;
 }
 
-.p-dialog-content{
+.p-dialog-content {
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
   padding: 10px;
 }
 
-.p-dialog-header{
+.p-dialog-header {
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   padding: 10px;
@@ -307,5 +306,13 @@ header {
 .p-button.p-button-info {
   background-color: var(--secondary-color);
   border-color: var(--secondary-color);
+}
+
+.p-toast-message{
+  padding: 10px;
+}
+
+.p-toast-message-text{
+  margin-left: 10px;
 }
 </style>
