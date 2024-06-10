@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100vw; height: 100vh; background-color: #2D2D2D; display: flex; justify-content: center; align-items: center;">
+  <div style="width: 100vw; height: 100vh; background-color: #f5f5f5; display: flex; justify-content: center; align-items: center;">
     <FormInscricao></FormInscricao>
   </div>    
 </template>
