@@ -3,7 +3,7 @@
         <!-- Cabeçalho -->
         <header class="header">
             <h1>SISTEMA ACADÊMICO</h1>
-            <p>Bem vindo(a)! Selecione as disciplinas que deseja se inscrever!</p>
+            <p>Seja bem vindo(a) ao nosso Sistema Acadêmico!</p>
         </header>
 
         <Divider />
@@ -13,18 +13,17 @@
             v-show="!logado">
             <div style="display: flex; flex-direction: column; width: 50%; margin: 16px 0px;">
                 <label for="prontuario">Prontuário</label>
-                <InputText id="prontuario" v-model="prontuarioCache" aria-describedby="username-help" />
-                <small id="prontuario-help" style="margin-top: 6px">Digite o seu prontuário para prosseguir.</small>
+                <InputText id="prontuario" v-model="prontuarioCache" aria-describedby="username-help" placeholder="Digite seu prontuário para prosseguir." required="true"/>
             </div>
-            <div style="margin-top: 12px">
+            <div>
                 <Button label="Prosseguir" severity="info" raised @click="confirmProntuario"
-                    style="padding: 8px"></Button>
+                    style="padding: 8px; width: 12rem; font-size: 18px;"></Button>
             </div>
         </div>
 
         <!-- Tabela de pré requisitos -->
         <section class="course-selection" v-if="prontuario !== null" v-show="selecionouMaterias">
-            <p style="margin-bottom: 12px">Selecione as disciplinas que já cursou:</p>
+            <p style="margin-bottom: 12px">Por favor, selecione as disciplinas que já cursou</p>
             <DataTable :value="preMaterias" selectionMode="multiple" v-model:selection="selectionPreMaterias"
                 dataKey="id" responsiveLayout="scroll">
                 <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
@@ -37,11 +36,12 @@
             </DataTable>
 
             <div style="margin-top: 12px">
-                <Button label="Confirmar" severity="info" raised @click="confirmPreRequisitos" style="padding: 8px" ></Button>
+                <Button label="Confirmar" severity="info" raised @click="confirmPreRequisitos" style="padding: 8px; width: 12rem; font-size: 18px;" ></Button>
             </div>
         </section>
         <!-- Tabela de Inscrição -->
         <section class="course-selection" v-if="prontuario !== null" v-show="selecionouDisciplinas">
+          <p style="margin-bottom: 12px">Agora selecione as disciplinas que deseja se inscrever</p>
             <DataTable :value="dataDisciplinas" selectionMode="multiple" v-model:selection="selectionData"
                 dataKey="codigo" responsiveLayout="scroll">
                 <Column selectionMode="multiple" headerStyle="width: 3em"></Column>
@@ -188,7 +188,8 @@ const confirmSelection = async () => {
 
     if(response.status == 402){
       const data = await response.json();
-      toast.add({ severity: 'error', summary: 'Erro', detail: `${data.message} - ${data.disciplina.nome} precisa de ${data.disciplina.pre_requisito}`, life: 3000 });      
+      toast.add({ severity: 'error', summary: 'Erro', detail: `${data.message} - ${data.disciplina.nome} precisa de ${data.disciplina.pre_requisito}`, life: 3000 });
+      clearSelection();      
     }
 
     if (response.status == 200) {
@@ -404,5 +405,10 @@ header {
 
 .p-toast-message-text{
   margin-left: 10px;
+}
+
+#prontuario{
+  padding: 5px 10px;
+  margin-top: 5px;
 }
 </style>
