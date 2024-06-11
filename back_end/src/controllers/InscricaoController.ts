@@ -41,7 +41,7 @@ export const realizarInscricao = async (req: any, res: any) => {
 
     // Adicionado na fila, não pode se inscrever novamente! 
     // 1 - Está na fila | 0 - Não está
-    const estaNaFila = await sistema.verificarFilaDeEspera(prontuario)
+    const estaNaFila = await sistema.verificarFilaDeEspera(prontuario, disciplinas);
 
     if(estaNaFila) {
       res.status(400).json({ message: 'Prontuário já está na fila de espera'});

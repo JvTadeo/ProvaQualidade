@@ -94,8 +94,11 @@ export class Sistema {
         }
     }
 
-    public async verificarFilaDeEspera(prontuario: string): Promise<any>{
+    public async verificarFilaDeEspera(prontuario: string, disciplina : Array<Disciplina>): Promise<any>{
         try {
+
+            const disciplinaEscolhidas : Array<Disciplina> = this.instanciarObjetos(disciplina);
+
             const response = await fetch("http://localhost:3001/lista_de_espera");
             const data = await response.json();
 
@@ -103,13 +106,19 @@ export class Sistema {
                 throw new Error(`Erro na requisição: ${response.status}`);
             }
 
+            let numberToBreak : Number = 0;
+
             for (let i = 0; i < data.length; i++) {
-                if (data[i].id == prontuario) {
-                    return 1;
+                for (let j = 0; j < disciplinaEscolhidas.length; j++) {
+                    if(data[i].id == prontuario && data[i].idDaTurnma == disciplinaEscolhidas[j].turma.codigo){ 
+                        numberToBreak = 1;
+                        break;
+                    }
                 }
+                if(numberToBreak == 1) break;
             }
 
-            return 0;
+            return numberToBreak;
 
         } catch (error) {
             console.error(error);
