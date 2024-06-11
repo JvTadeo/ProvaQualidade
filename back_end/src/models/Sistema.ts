@@ -1,4 +1,5 @@
 import { Disciplina } from "./Disciplina";
+import { PreRequisito } from "./PreRequisito";
 import { Turma } from "./Turma";
 
 export class Sistema {
@@ -15,7 +16,7 @@ export class Sistema {
 
     public realizarInscricao(disciplina: Array<Disciplina>): { id: number, disciplinaReturn: Disciplina } {
 
-        let disciplinaVazia : Disciplina = new Disciplina('', 0, new Turma('', '', '', '', 0));
+        let disciplinaVazia : Disciplina = new Disciplina('', 0, new Turma('', '', '', '', 0), '');
 
         try {
             const disciplinasEscolhidas: Array<Disciplina> = this.instanciarObjetos(disciplina);            
@@ -29,6 +30,7 @@ export class Sistema {
             }
 
             return { id: 1, disciplinaReturn: disciplinaVazia }
+
         } catch (error) {
             console.error(error)
             return { id: 0, disciplinaReturn: disciplinaVazia }
@@ -51,9 +53,71 @@ export class Sistema {
             throw error;
         }
     }
+    
+    public async apresentarPeRequisitos(): Promise<any>{
+        try {
+            const response = await fetch("http://localhost:3001/materias_anteriores");
 
-    public async adicionarAlunoNaFilaDeEspera(disciplina: Disciplina): Promise<Number> {
-        let idAluno: string = Math.random().toString(36).substring(2, 15);
+            if (!response.ok) {
+                throw new Error(`Erro na requisição: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+        }
+        catch (error){
+            console.error(error);
+            throw error;
+        }
+    }
+
+    public async cadastrarNoDb(prontuario : string): Promise<any>{
+        try {
+            const response = await fetch('http://localhost:3001/cadastros_realizados', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: prontuario
+                })
+            })
+
+            if (!response.ok) {
+                throw new Error(`Erro na requisição: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    public async verificarFilaDeEspera(prontuario: string): Promise<any>{
+        try {
+            const response = await fetch("http://localhost:3001/lista_de_espera");
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(`Erro na requisição: ${response.status}`);
+            }
+
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].id == prontuario) {
+                    return 1;
+                }
+            }
+
+            return 0;
+
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }        
+
+    public async adicionarAlunoNaFilaDeEspera(disciplina: Disciplina, prontuario: String): Promise<Number> {        
         
         try {            
             const response = await fetch("http://localhost:3001/lista_de_espera", {
@@ -62,7 +126,7 @@ export class Sistema {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    idAluno: idAluno,
+                    id: prontuario,
                     nomeDisciplina: disciplina.nome,
                     idDaTurnma: disciplina.turma.codigo,
                 })
@@ -78,6 +142,56 @@ export class Sistema {
             return 0;
         }
     }
+    
+    public async verificarCadastroDeProntuario(prontuario: string): Promise<Number> {
+        try {
+            const response = await fetch("http://localhost:3001/cadastros_realizados");
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(`Erro na requisição: ${response.status}`);
+            }
+
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].id == prontuario) {
+                    return 1;
+                }
+            }
+            return 0;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    public verificarDisciplinas(disciplina : Array<Disciplina>, preRequisito: Array<PreRequisito>) : Disciplina {
+        const disciplinaEscolhidas: Array<Disciplina> = this.instanciarObjetos(disciplina);
+
+        let disciplinaVazia: Disciplina = new Disciplina('', 10000, new Turma('', '', '', '', 0), '');
+    
+        for (let i = 0; i < disciplinaEscolhidas.length; i++) {
+            // Pular a verificação se pre_requisito estiver vazio
+            if (!disciplinaEscolhidas[i].pre_requisito) {
+                continue;
+            }
+    
+            let preRequisitoAtendido = false;
+    
+            for (let j = 0; j < preRequisito.length; j++) {
+                // console.log(`Comparando ${disciplinaEscolhidas[i].nome}, com seu pré-requisito ${disciplinaEscolhidas[i].pre_requisito} - ${preRequisito[j].id}`);
+                if (disciplinaEscolhidas[i].pre_requisito === preRequisito[j].id) {
+                    preRequisitoAtendido = true;
+                    break;
+                }
+            }
+    
+            if (!preRequisitoAtendido) {
+                return disciplinaEscolhidas[i];
+            }
+        }
+    
+        return disciplinaVazia; // Retorna disciplina vazia se todos os pré-requisitos forem atendidos
+    }    
 
     private existeEspacoIndisponivel(disciplina: Array<Disciplina>): Disciplina | null {
         for (let i = 0; i < disciplina.length; i++) {
@@ -111,8 +225,8 @@ export class Sistema {
 
     private instanciarObjetos(objeto: Array<any>): Array<Disciplina> {
         const disciplinas: Array<Disciplina> = [];
-        for (let index = 0; index < objeto.length; index++) {            
-            const disciplina = new Disciplina(objeto[index].nome_disciplina, objeto[index].creditos, new Turma(objeto[index].codigo, objeto[index].professor, objeto[index].horario, objeto[index].local, objeto[index].espaco_disponivel));
+        for (let index = 0; index < objeto.length; index++) {
+            const disciplina = new Disciplina(objeto[index].nome_disciplina, objeto[index].creditos, new Turma(objeto[index].codigo, objeto[index].professor, objeto[index].horario, objeto[index].local, objeto[index].espaco_disponivel), objeto[index].pre_requisito);
             disciplinas.push(disciplina);
         }
         return disciplinas;
@@ -125,10 +239,10 @@ export class Sistema {
         }
         
         if(creditos > 20){
-            console.log('Quantidade de créditos excedida!')
+            // console.log('Quantidade de créditos excedida!')
             return true
         }else{
-            console.log('Quantidade de créditos permitida!')
+            // console.log('Quantidade de créditos permitida!')
             return false
         }
     }

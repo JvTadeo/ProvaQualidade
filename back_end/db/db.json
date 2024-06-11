@@ -8,7 +8,8 @@
       "creditos": 5,
       "local": "Sala 101",
       "horario": "Segunda 19:00 - 20:40",
-      "espaco_disponivel": 5
+      "espaco_disponivel": 5,
+      "pre_requisito": ""
     },
     {
       "id": "02",
@@ -18,7 +19,8 @@
       "creditos": 6,
       "local": "Sala 102",
       "horario": "Terça 19:00 - 21:40",
-      "espaco_disponivel": 10
+      "espaco_disponivel": 10,
+      "pre_requisito": ""
     },
     {
       "id": "03",
@@ -28,7 +30,8 @@
       "creditos": 5,
       "local": "Sala 103",
       "horario": "Quarta 19:00 - 20:40",
-      "espaco_disponivel": 15
+      "espaco_disponivel": 15,
+      "pre_requisito": "POO"
     },
     {
       "id": "04",
@@ -38,7 +41,8 @@
       "creditos": 6,
       "local": "Sala 104",
       "horario": "Quinta 19:00 - 21:40",
-      "espaco_disponivel": 0
+      "espaco_disponivel": 0,
+      "pre_requisito": ""
     },
     {
       "id": "05",
@@ -48,7 +52,8 @@
       "creditos": 5,
       "local": "Sala 105",
       "horario": "Segunda 19:00 - 20:40",
-      "espaco_disponivel": 12
+      "espaco_disponivel": 12,
+      "pre_requisito": "POO"
     },
     {
       "id": "06",
@@ -58,7 +63,8 @@
       "creditos": 6,
       "local": "Sala 106",
       "horario": "Terça 19:00 - 21:40",
-      "espaco_disponivel": 0
+      "espaco_disponivel": 0,
+      "pre_requisito": "ESD"
     },
     {
       "id": "07",
@@ -68,7 +74,8 @@
       "creditos": 5,
       "local": "Sala 107",
       "horario": "Quarta 19:00 - 20:40",
-      "espaco_disponivel": 18
+      "espaco_disponivel": 18,
+      "pre_requisito": "ESD"
     },
     {
       "id": "08",
@@ -78,7 +85,8 @@
       "creditos": 6,
       "local": "Sala 108",
       "horario": "Quinta 19:00 - 21:40",
-      "espaco_disponivel": 14
+      "espaco_disponivel": 14,
+      "pre_requisito": "ESD"
     },
     {
       "id": "09",
@@ -88,8 +96,42 @@
       "creditos": 5,
       "local": "Sala 109",
       "horario": "Segunda 19:00 - 20:40",
-      "espaco_disponivel": 0
+      "espaco_disponivel": 0,
+      "pre_requisito": "RDC"
     }
   ],
-  "lista_de_espera": []
+  "materias_anteriores": [
+    {
+      "id": "POO",
+      "nome": "Programação Orientada a Objetos"
+    },
+    {
+      "id": "ESD",
+      "nome": "Estruturas de Dados"
+    },
+    {
+      "id": "ENGS",
+      "nome": "Engenharia de Software"
+    },
+    {
+      "id": "RDC",
+      "nome": "Redes de Computadores"
+    },
+    {
+      "id": "SO",
+      "nome": "Sistemas Operacionais"
+    }
+  ],
+  "lista_de_espera": [
+    {
+      "id": "BP862420",
+      "nomeDisciplina": "Segurança de Sistemas",
+      "idDaTurnma": "T009"
+    }
+  ],
+  "cadastros_realizados": [
+    {
+      "id": "BP62418"
+    }
+  ]
 }
