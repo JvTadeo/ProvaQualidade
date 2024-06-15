@@ -16,70 +16,72 @@ export const apresentarDisciplinas = async (req: any, res: any) => {
 
 export const realizarInscricao = async (req: any, res: any) => {
   try {
-    // Variables
-    const { turmas, pre_requisito, prontuario } = req.body;    
+      // Variables
+      const { turmas, pre_requisito, prontuario } = req.body;
 
-    const disciplinas: Array<Disciplina> = [];
-    const preRequistos: Array<PreRequisito> = [];
+      const disciplinas: Disciplina[] = [];
+      const preRequistos: PreRequisito[] = [];
 
-    for (let index = 0; index < turmas.length; index++) {
-      disciplinas[index] = turmas[index]      
-    }
+      for (let index = 0; index < turmas.length; index++) {
+          disciplinas[index] = turmas[index];
+      }
 
-    for(let index = 0; index < pre_requisito.length; index++) {
-      preRequistos[index] = pre_requisito[index]
-    }
+      for (let index = 0; index < pre_requisito.length; index++) {
+          preRequistos[index] = pre_requisito[index];
+      }
 
-    // Verificar Pré-Requisitos
+      // Verificar Pré-Requisitos
+      const verificarPreRequisitos = sistema.verificarDisciplinas(disciplinas, preRequistos);
 
-    const verificarPreRequisitos = sistema.verificarDisciplinas(disciplinas, preRequistos);
-    
-    if(verificarPreRequisitos.creditos != 10000) {
-      res.status(402).json({ message: 'Disciplina não pode ser inscrita pois ela possui pré-requisitos!', disciplina: verificarPreRequisitos});
-      return
-    }
+      if (verificarPreRequisitos.creditos !== 10000) {
+          res.status(402).json({ message: 'Disciplina não pode ser inscrita pois ela possui pré-requisitos!', disciplina: verificarPreRequisitos });
+          return;
+      }
 
-    // Adicionado na fila, não pode se inscrever novamente! 
-    // 1 - Está na fila | 0 - Não está
-    const estaNaFila = await sistema.verificarFilaDeEspera(prontuario, disciplinas);
+      // Verificar se está na fila de espera
+      const estaNaFila = await sistema.verificarFilaDeEspera(prontuario, disciplinas);
 
-    if(estaNaFila) {
-      res.status(400).json({ message: 'Prontuário já está na fila de espera'});
-      return
-    }
+      if (estaNaFila) {
+          res.status(400).json({ message: 'Prontuário já está na fila de espera' });
+          return;
+      }
 
-    const verificarCadastroNoBanco = await sistema.verificarCadastroDeProntuario(prontuario);
+      // Verificar cadastro no banco
+      const verificarCadastroNoBanco = await sistema.verificarCadastroDeProntuario(prontuario);
 
-    if(verificarCadastroNoBanco == 1){
-      res.status(400).json({ message: 'Prontuário já cadastrado!'});
-      return
-    }
+      if (verificarCadastroNoBanco === 1) {
+          res.status(400).json({ message: 'Prontuário já cadastrado!' });
+          return;
+      }
 
-    const result = sistema.realizarInscricao(disciplinas);
+      // Realizar inscrição
+      const result = sistema.realizarInscricao(disciplinas);
 
-    if(result.id === 2) {
-      res.status(400).json({ message: 'Horário de inscrição já ocupado'});
-      return;
-    }
-    if(result.id === 3) {
-      res.status(400).json({ message: 'Créditos excedidos'});
-      return;
-    }
+      if (result.id === 2) {
+          res.status(400).json({ message: 'Horário de inscrição já ocupado' });
+          return;
+      }
+      if (result.id === 3) {
+          res.status(400).json({ message: 'Créditos excedidos' });
+          return;
+      }
+      if (result.id === 4) {
+          res.status(401).json({ message: 'Espaço indisponível', disciplina: result.disciplinaReturn });
+          return;
+      }
 
-    if(result.id === 4) {
-      res.status(401).json({ message: 'Espaço indisponível', disciplina: result.disciplinaReturn});      
-      return;
-    }
+      // Inscrição bem sucedida
+      res.status(200).json({ message: 'Inscrição realizada com sucesso' });
 
-    res.status(200).json({ message: 'Inscrição realizada com sucesso'});
-
-    sistema.cadastrarNoDb(prontuario);
+      // Cadastro no banco de dados
+      await sistema.cadastrarNoDb(prontuario);
 
   } catch (error) {
-    console.error(error);    
-    res.status(500).json({ message: 'Erro ao realizar inscrição  - Server'});
+      console.error(error);
+      res.status(500).json({ message: 'Erro ao realizar inscrição - Server' });
   }
 };
+
 
 export const adicionarAFila = async(req: any, res: any) => {
   try {
