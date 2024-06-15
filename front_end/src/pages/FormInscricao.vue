@@ -196,6 +196,10 @@ const confirmSelection = async () => {
       const data = await response.json();
       toast.add({ severity: 'success', summary: 'Sucesso', detail: data.message, life: 3000 });
       clearSelection();
+      logado.value = false;
+      selecionouMaterias.value = false;
+      selecionouDisciplinas.value = false;
+      selectionPreMaterias.value = [];
     }
 
   } catch (error) {
