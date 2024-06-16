@@ -26,7 +26,7 @@ export class InscricaoControllerTest {
 
   async runTests() {
     describe('Apresentar Disciplinas', () => {
-      it('should return 200 and data on success', async () => {
+      it('should return 200 and data on success', async () => { // Retornar todas as Disciplinas
         const mockData = { data: 'someData' };
         this.sistemaMock.apresentarDadosDoBanco.mockResolvedValueOnce(mockData);
 
@@ -35,8 +35,7 @@ export class InscricaoControllerTest {
         expect(this.res.status).toHaveBeenCalledWith(200);
         expect(this.res.send).toHaveBeenCalledWith(mockData);
       });
-
-      it('should return 500 on error', async () => {
+      it('should return 500 on error', async () => { // Ocorreu algum erro para retornar as Disciplinas
         this.sistemaMock.apresentarDadosDoBanco.mockRejectedValue(new Error('some error'));
         await this.inscricaoController.apresentarDisciplinas(this.req as Request, this.res as Response);
 
@@ -50,25 +49,21 @@ export class InscricaoControllerTest {
           body: {
             turmas: [
               new Disciplina(
-                'Disciplina Teste',
-                4,
+                'Disciplina - FRONT END',
+                50,
                 new Turma('codigo', 'professor', 'horario', 'local', 30),
                 new String('Pre-requisito Teste')
               ),
             ],
-            pre_requisito: [{ nome: 'Pre-requisito Teste' }],
+            pre_requisito: [{ id: 'TS', nome: 'Pre-requisito Teste' }],
             prontuario: '12345',
           },
         };
+        jest.clearAllMocks();
       });
-
-      it('should return 402 if pre-requisites are not met', async () => {
-        const mockDisciplina: Disciplina = new Disciplina(
-          'Disciplina Teste',
-          9999,
-          new Turma('codigo', 'professor', 'horario', 'local', 30),
-          new String('Pre-requisito Teste')
-        );
+      it('should return 402 if pre-requisites are not met', async () => { // Disciplina precisa de Requisitos
+        const mockDisciplina: Disciplina = new Disciplina( 'Disciplina - INSCRIÇÃO', 50, new Turma('codigo', 'professor', 'horario', 'local', 30), 'Pre-requisito Teste' );
+        
         this.sistemaMock.verificarDisciplinas.mockReturnValue(mockDisciplina);
 
         await this.inscricaoController.realizarInscricao(this.req as Request, this.res as Response);
@@ -79,8 +74,33 @@ export class InscricaoControllerTest {
           disciplina: mockDisciplina,
         });
       });
+      it('should return 400 if credits sum is over 20', async() => { //Soma de créditos maior que 20        
+        const mockDisciplinaTeste: Disciplina = new Disciplina('Disciplina - Excedida', 10000,
+          { codigo: 'codigo', professor: 'professor', horario: 'horario', local: 'local', espacoDisponivel: 30 },
+          ''
+        );
 
-      // Adicione mais testes para cobrir todos os cenários
+        this.sistemaMock.verificarDisciplinas.mockReturnValue(mockDisciplinaTeste);
+        this.sistemaMock.realizarInscricao.mockReturnValue({ id: 3, disciplinaReturn: mockDisciplinaTeste });
+
+        await this.inscricaoController.realizarInscricao(this.req as Request, this.res as Response);
+
+        expect(this.res.status).toHaveBeenCalledWith(400);
+        expect(this.res.json).toHaveBeenCalledWith({ message: 'Créditos excedidos' });
+      });
+      it('should return 401 if maximum capacity', async () => { // Espaço disponível
+        const mockDisciplinaTeste: Disciplina = new Disciplina('Disciplina - Excedida', 10000,
+          { codigo: 'codigo', professor: 'professor', horario: 'horario', local: 'local', espacoDisponivel: 0 },
+          ''
+        );
+        this.sistemaMock.verificarDisciplinas.mockReturnValue(mockDisciplinaTeste);
+        this.sistemaMock.realizarInscricao.mockReturnValue({id:4 , disciplinaReturn: mockDisciplinaTeste});
+        
+        await this.inscricaoController.realizarInscricao(this.req as Request, this.res as Response);
+
+        expect(this.res.status).toHaveBeenCalledWith(401);
+        expect(this.res.json).toHaveBeenCalledWith({ message: 'Espaço indisponível', disciplina: mockDisciplinaTeste });
+      })
     });
     describe('Adicionar na Fila', () => {
       beforeEach(() => {
@@ -92,7 +112,7 @@ export class InscricaoControllerTest {
         };
       });
 
-      it('should return 200 on success', async () => {
+      it('should return 200 on success', async () => { // Adicionado na fila com exito
 
         await this.inscricaoController.adicionarAFila(this.req as Request, this.res as Response);
 
@@ -100,7 +120,7 @@ export class InscricaoControllerTest {
         expect(this.res.json).toHaveBeenCalledWith({ message: 'Aluno adicionado na fila de espera' });
       });
 
-      it('should return 500 on error', async () => {
+      it('should return 500 on error', async () => { // Não foi possível ser adicionado na fila
         this.sistemaMock.adicionarAlunoNaFilaDeEspera.mockImplementation(() => {
           throw new Error('some error');
         });
@@ -111,7 +131,7 @@ export class InscricaoControllerTest {
       });
     });
     describe('Apresentar Pre Requisitos', () => {
-      it('should return 200 and data on success', async () => {
+      it('should return 200 and data on success', async () => { // Retonar todas os Pré Requisitos
         const mockData = { data: 'some data' };
         this.sistemaMock.apresentarPeRequisitos.mockResolvedValue(mockData);
 
@@ -121,7 +141,7 @@ export class InscricaoControllerTest {
         expect(this.res.send).toHaveBeenCalledWith(mockData);
       });
 
-      it('should return 500 on error', async () => {
+      it('should return 500 on error', async () => { // Ocorreu algum erro!
         this.sistemaMock.apresentarPeRequisitos.mockRejectedValue(new Error('some error'));
 
         await this.inscricaoController.apresentarPreRequisitos(this.req as Request, this.res as Response);

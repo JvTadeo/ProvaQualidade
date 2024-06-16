@@ -3,9 +3,6 @@ import { PreRequisito } from "./PreRequisito";
 import { Turma } from "./Turma";
 
 export class Sistema {
-
-    private disciplinasData: Array<Disciplina> = [];
-
     /*
     0 - Error
     1 - Sucesso
@@ -45,7 +42,6 @@ export class Sistema {
                 throw new Error(`Erro na requisição: ${response.status}`);
             }
             const data = await response.json();
-            this.disciplinasData = this.instanciarObjetos(data);
             return data
 
         } catch (error) {
@@ -202,7 +198,7 @@ export class Sistema {
         return disciplinaVazia; // Retorna disciplina vazia se todos os pré-requisitos forem atendidos
     }    
 
-    private existeEspacoIndisponivel(disciplina: Array<Disciplina>): Disciplina | null {
+    public existeEspacoIndisponivel(disciplina: Array<Disciplina>): Disciplina | null {
         for (let i = 0; i < disciplina.length; i++) {
             if (disciplina[i].turma.espacoDisponivel === 0) {
                 return disciplina[i]; // Retorna a disciplina sem espaço disponível
@@ -241,7 +237,7 @@ export class Sistema {
         return disciplinas;
     }
 
-    private verificarQuantidadeCreditos(disciplina: Array<Disciplina>): boolean {
+    public verificarQuantidadeCreditos(disciplina: Array<Disciplina>): boolean {
         let creditos : number = 0
         for (let index = 0; index < disciplina.length; index++) {
             creditos += disciplina[index].creditos

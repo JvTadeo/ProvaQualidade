@@ -15,7 +15,7 @@ export class InscricaoController {
       const data = await this.sistema.apresentarDadosDoBanco();
       res.status(200).send(data);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       res.status(500).json({ message: 'Erro ao apresentar disciplinas' });
     }
   }
@@ -23,7 +23,6 @@ export class InscricaoController {
   public async realizarInscricao(req: Request, res: Response) {
     try {
       const { turmas, pre_requisito, prontuario } = req.body;
-
       const disciplinas: Disciplina[] = turmas;
       const preRequistos: PreRequisito[] = pre_requisito;
 
@@ -68,7 +67,7 @@ export class InscricaoController {
       await this.sistema.cadastrarNoDb(prontuario);
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       res.status(500).json({ message: 'Erro ao realizar inscrição - Server' });
     }
   }
@@ -88,7 +87,7 @@ export class InscricaoController {
       const data = await this.sistema.apresentarPeRequisitos();
       res.status(200).send(data);
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       res.status(500).send('Erro ao apresentar disciplinas');
     }
   }
