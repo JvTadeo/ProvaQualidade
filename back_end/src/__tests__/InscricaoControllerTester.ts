@@ -75,30 +75,37 @@ export class InscricaoControllerTest {
         });
       });
       it('should return 400 if credits sum is over 20', async() => { //Soma de créditos maior que 20        
+        // Criação do Mock
         const mockDisciplinaTeste: Disciplina = new Disciplina('Disciplina - Excedida', 10000,
           { codigo: 'codigo', professor: 'professor', horario: 'horario', local: 'local', espacoDisponivel: 30 },
           ''
         );
-
+        // Atribuindo o mockDisciplinaTeste como retorno do verificarDisciplina.
         this.sistemaMock.verificarDisciplinas.mockReturnValue(mockDisciplinaTeste);
+        // Retornando o id de erro 3 e o mockDisciplina.
         this.sistemaMock.realizarInscricao.mockReturnValue({ id: 3, disciplinaReturn: mockDisciplinaTeste });
-
+        // Realiza a inscrição
         await this.inscricaoController.realizarInscricao(this.req as Request, this.res as Response);
-
+        // E se expera um status Code de 400 e a messagem 'Créditos Excedidos'
         expect(this.res.status).toHaveBeenCalledWith(400);
         expect(this.res.json).toHaveBeenCalledWith({ message: 'Créditos excedidos' });
       });
       it('should return 401 if maximum capacity', async () => { // Espaço disponível
+        //Criação do Mock de disciplinas
         const mockDisciplinaTeste: Disciplina = new Disciplina('Disciplina - Excedida', 10000,
           { codigo: 'codigo', professor: 'professor', horario: 'horario', local: 'local', espacoDisponivel: 0 },
           ''
         );
+        //Vai atribuir o mockDisciplinaTeste como um retorno do verificarDisciplinas()
         this.sistemaMock.verificarDisciplinas.mockReturnValue(mockDisciplinaTeste);
+        //Vai retornar retonar o ID do erro, com o mockDisciplina
         this.sistemaMock.realizarInscricao.mockReturnValue({id:4 , disciplinaReturn: mockDisciplinaTeste});
-        
+        // Realiza a inscrição
         await this.inscricaoController.realizarInscricao(this.req as Request, this.res as Response);
 
+        // Espera que o status Code retorne 401
         expect(this.res.status).toHaveBeenCalledWith(401);
+        // E também, que ele tenha a mensagem 'Espaço Indisponivel' e retorna a disciplina que está sem espaço
         expect(this.res.json).toHaveBeenCalledWith({ message: 'Espaço indisponível', disciplina: mockDisciplinaTeste });
       })
     });
