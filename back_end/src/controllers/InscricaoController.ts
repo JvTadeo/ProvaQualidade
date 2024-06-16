@@ -2,19 +2,19 @@ import { Sistema } from "../models/Sistema";
 import { Disciplina } from "../models/Disciplina";
 import { PreRequisito } from "../models/PreRequisito";
 
-const sistema = new Sistema();
-
 export const apresentarDisciplinas = async (req: any, res: any) => {
   try {
-    const data = await sistema.apresentarDadosDoBanco();
+    const sistema = new Sistema();
+    const data = await sistema.apresentarDadosDoBanco();    
     res.status(200).send(data);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Erro ao apresentar disciplinas'); // Retorna um status 500 em caso de erro
+    res.status(500).json({ message: 'Erro ao apresentar disciplinas'}); // Retorna um status 500 em caso de erro
   }
 };
 
 export const realizarInscricao = async (req: any, res: any) => {
+  const sistema = new Sistema();
   try {
       // Variables
       const { turmas, pre_requisito, prontuario } = req.body;
@@ -82,8 +82,8 @@ export const realizarInscricao = async (req: any, res: any) => {
   }
 };
 
-
 export const adicionarAFila = async(req: any, res: any) => {
+  const sistema = new Sistema();
   try {
     const { disciplina, prontuario } = req.body;    
     sistema.adicionarAlunoNaFilaDeEspera(disciplina, prontuario);        
@@ -94,6 +94,7 @@ export const adicionarAFila = async(req: any, res: any) => {
 };
 
 export const apresentarPreRequisitos = async (req: any, res: any) => {
+  const sistema = new Sistema();
   try {
     const data = await sistema.apresentarPeRequisitos();
     res.status(200).send(data);

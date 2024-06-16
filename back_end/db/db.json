@@ -122,16 +122,6 @@
       "nome": "Sistemas Operacionais"
     }
   ],
-  "lista_de_espera": [
-    {
-      "id": "BP862420",
-      "nomeDisciplina": "Segurança de Sistemas",
-      "idDaTurnma": "T009"
-    }
-  ],
-  "cadastros_realizados": [
-    {
-      "id": "BP62418"
-    }
-  ]
+  "lista_de_espera": [],
+  "cadastros_realizados": []
 }

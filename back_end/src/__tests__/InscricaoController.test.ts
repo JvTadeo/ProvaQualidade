@@ -1,19 +1,20 @@
 import { Request, Response } from 'express';
-import { apresentarDisciplinas, realizarInscricao, adicionarAFila, apresentarPreRequisitos } from '../src/controllers/InscricaoController';
-import { Sistema } from '../src/models/Sistema';
-import { Disciplina } from '../src/models/Disciplina';
-import { PreRequisito } from '../src/models/PreRequisito';
-import { Turma } from '../src/models/Turma';
+import { apresentarDisciplinas, realizarInscricao, adicionarAFila, apresentarPreRequisitos } from '../controllers/InscricaoController';
+import { Sistema } from '../models/Sistema';
+import { Disciplina } from '../models/Disciplina';
+import { Turma } from '../models/Turma';
 
-jest.mock('../src/models/Sistema');
+jest.mock('../models/Sistema');
 
-describe('InscricaoController', () => {
+describe('Inscricao Controller', () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
   let sistemaMock: jest.Mocked<Sistema>;
 
   beforeEach(() => {
-    req = {};
+    req = {
+      body: {},
+    };
     res = {
       status: jest.fn().mockReturnThis(),
       send: jest.fn(),
@@ -23,13 +24,14 @@ describe('InscricaoController', () => {
     (Sistema as jest.Mock).mockReturnValue(sistemaMock);
   });
 
-  describe('apresentarDisciplinas', () => {
+  describe('Apresentar Disciplinas', () => {
     it('should return 200 and data on success', async () => {
-      const mockData = { data: 'some data' };
-      sistemaMock.apresentarDadosDoBanco.mockResolvedValue(mockData);
+      const mockData = { data: 'someData' };
+      sistemaMock.apresentarDadosDoBanco.mockResolvedValueOnce(mockData);
 
       await apresentarDisciplinas(req as Request, res as Response);
 
+      expect(sistemaMock.apresentarDadosDoBanco).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.send).toHaveBeenCalledWith(mockData);
     });
@@ -40,11 +42,11 @@ describe('InscricaoController', () => {
       await apresentarDisciplinas(req as Request, res as Response);
 
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.send).toHaveBeenCalledWith('Erro ao apresentar disciplinas');
+      expect(res.json).toHaveBeenCalledWith({message: 'Erro ao apresentar disciplinas'});
     });
   });
 
-  describe('realizarInscricao', () => {
+  describe('Realizar Inscricao', () => {
     beforeEach(() => {
       req = {
         body: {
@@ -75,7 +77,7 @@ describe('InscricaoController', () => {
     // Adicione mais testes para cobrir todos os cenários
   });
 
-  describe('adicionarAFila', () => {
+  describe('Adicionar na Fila', () => {
     beforeEach(() => {
       req = {
         body: {
@@ -104,7 +106,7 @@ describe('InscricaoController', () => {
     });
   });
 
-  describe('apresentarPreRequisitos', () => {
+  describe('Apresentar Pre Requisitos', () => {
     it('should return 200 and data on success', async () => {
       const mockData = { data: 'some data' };
       sistemaMock.apresentarPeRequisitos.mockResolvedValue(mockData);
